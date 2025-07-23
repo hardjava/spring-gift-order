@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Sign Up Form</title>
+  <style>
+    body {
+      background-color: #f0f8ff;
+    }
+
+    #signupbox {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .form-row {
+      display: flex;
+      align-items: center;
+      margin: 10px;
+    }
+
+    label {
+      width: 100px;
+      text-align: right;
+      margin-right: 10px;
+      font-weight: bold;
+    }
+
+    input {
+      padding: 5px;
+      font-size: 16px;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 5px 10px;
+      margin-left: 110px;
+      width: 200px;
+      height: 35px;
+      font-size: 20px;
+    }
+
+    .error {
+      color: red;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+<div id="signupbox">
+  <form th:action="@{/signup-page}" th:object="${userRequestDto}" method="post">
+    <div th:if="${signupError}" class="error">
+      <p th:text="${signupError}"></p>
+    </div>
+
+    <div class="form-row">
+      <label for="email">Email</label>
+      <input type="email" th:field="*{email}" id="email" placeholder="example@example.com">
+    </div>
+
+    <div class="form-row">
+      <label for="password">Password</label>
+      <input type="password" th:field="*{password}" id="password">
+    </div>
+
+    <button type="submit">Sign Up</button>
+  </form>
+</div>
+</body>
+</html>
