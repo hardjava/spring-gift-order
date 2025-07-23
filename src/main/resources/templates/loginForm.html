@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Product Management System</title>
+</head>
+<body>
+<h1>로그인</h1>
+
+<form th:action="@{/admin/boards/login}" method="post">
+  <div>
+    <input type="email" name="email" placeholder="이메일">
+  </div>
+  <div>
+    <input type="password" name="password" placeholder="비밀번호">
+  </div>
+  <div>
+    <button type="submit">등록</button>
+  </div>
+
+</form>
+</body>
+</html>

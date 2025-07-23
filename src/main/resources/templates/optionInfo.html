@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Product Management System</title>
+  <style>
+    th, td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid black;
+    }
+
+    th {
+      background-color: steelblue;
+      color: white;
+    }
+
+    th:nth-child(1),
+    td:nth-child(1) {
+      width: 15%;
+    }
+
+    th:nth-child(2),
+    td:nth-child(2) {
+      width: 55%;
+    }
+
+    th:nth-child(3),
+    td:nth-child(3) {
+      width: 30%;
+    }
+
+    tr:nth-child(even) {
+      background-color: lightgray;
+    }
+
+    ul {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+  </style>
+</head>
+<body>
+<h1>Product Management System</h1>
+<table style="width: 100vw;background-color: white">
+  <thead>
+  <tr>
+    <th>name</th>
+    <th>quantity</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <tr th:each="option : ${options}">
+    <td><span th:text="${option.name}"></span></td>
+    <td><span th:text="${option.quantity}"></span></td>
+  </tr>
+  </tbody>
+</table>
+<button type="button" th:onclick="|location.href='@{/admin/boards}'|">돌아가기</button>
+</body>
+</html>
