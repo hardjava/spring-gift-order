@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>회원 목록</title>
+</head>
+<body>
+<h2>회원 목록</h2>
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>이름</th>
+        <th>이메일</th>
+        <th>권한</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="member : ${page.content}">
+        <td th:text="${member.id}"></td>
+        <td th:text="${member.name}"></td>
+        <td th:text="${member.email}"></td>
+        <td th:text="${member.role}"></td>
+        <td>
+            <a th:href="@{/admin/members/{id}/update(id=${member.id})}">수정</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- 페이지네이션 -->
+<div>
+    <ul style="list-style: none; display: flex; gap: 10px; padding: 0;">
+        <li th:if="${page.hasPrevious()}">
+            <a th:href="@{/admin/members(page=${page.number - 1}, size=${page.size})}">이전</a>
+        </li>
+        <li th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}">
+            <a th:href="@{/admin/members(page=${i}, size=${page.size})}"
+               th:text="${i + 1}"
+               th:classappend="${i} == ${page.number} ? 'active' : ''"></a>
+        </li>
+        <li th:if="${page.hasNext()}">
+            <a th:href="@{/admin/members(page=${page.number + 1}, size=${page.size})}">다음</a>
+        </li>
+    </ul>
+</div>
+
+<form th:action="@{/admin/members/logout}" method="post">
+    <button type="submit">로그아웃</button>
+</form>
+
+</body>
+</html>

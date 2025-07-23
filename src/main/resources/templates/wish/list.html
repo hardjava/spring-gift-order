@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>나의 위시리스트</title>
+</head>
+<body>
+<h2>✨ 나의 위시리스트 ✨</h2>
+
+<div class="sort-links">
+    정렬: 상품명
+    <a href="?page=0&sort=productName,asc">오름차순</a>
+    <a href="?page=0&sort=productName,desc">내림차순</a>
+</div>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>상품 ID</th>
+        <th>상품명</th>
+        <th>가격</th>
+        <th>이미지</th>
+        <th>삭제</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="wish : ${page.content}">
+        <td th:text="${wish.productId}"></td>
+        <td th:text="${wish.name}"></td>
+        <td th:text="${wish.price} + '원'"></td>
+        <td><img th:src="${wish.imageUrl}" alt="상품 이미지" width="100"/></td>
+        <td>
+            <form th:action="@{'/api/wishes/' + ${wish.wishId}}" method="post">
+                <input type="hidden" name="_method" value="delete"/>
+                <button type="submit">삭제</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- 페이지네이션 -->
+<div>
+    <ul style="list-style: none; display: flex; gap: 10px; padding: 0;">
+        <li th:if="${page.hasPrevious()}">
+            <a th:href="@{/wishes(page=${page.number - 1}, size=${page.size})}">이전</a>
+        </li>
+        <li th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}">
+            <a th:href="@{/wishes(page=${i}, size=${page.size})}"
+               th:text="${i + 1}"
+               th:classappend="${i} == ${page.number} ? 'active' : ''"></a>
+        </li>
+        <li th:if="${page.hasNext()}">
+            <a th:href="@{/wishes(page=${page.number + 1}, size=${page.size})}">다음</a>
+        </li>
+    </ul>
+</div>
+
+</body>
+</html>
