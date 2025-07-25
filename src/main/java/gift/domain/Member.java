@@ -24,7 +24,7 @@ public class Member extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Role role;
+    private Role role = Role.ROLE_USER;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -41,6 +41,11 @@ public class Member extends BaseEntity {
         this(null, email, password, role);
     }
 
+    public Member(Long kakaoId, OauthProvider oauthProvider) {
+        this.kakaoId = kakaoId;
+        this.oauthProvider = oauthProvider;
+    }
+
     protected Member() {
     }
 
@@ -54,6 +59,14 @@ public class Member extends BaseEntity {
 
     public String getPassword() {
         return password;
+    }
+
+    public Long getKakaoId() {
+        return kakaoId;
+    }
+
+    public OauthProvider getOauthProvider() {
+        return oauthProvider;
     }
 
     public Role getRole() {

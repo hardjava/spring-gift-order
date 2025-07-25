@@ -1,5 +1,6 @@
 package gift.controller;
 
+import gift.dto.TokenResponseDto;
 import gift.service.KakaoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +17,9 @@ public class KakaoLoginController {
     }
 
     @GetMapping("/oauth/kakao/callback")
-    public ResponseEntity<?> callback(@RequestParam("code") String code) {
-        kakaoService.kakaoLogin(code);
-//        System.out.println("responseDto = " + responseDto);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<TokenResponseDto> callback(@RequestParam("code") String code) {
+        TokenResponseDto responseDto = kakaoService.kakaoLogin(code);
+
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 }

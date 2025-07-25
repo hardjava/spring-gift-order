@@ -1,5 +1,6 @@
 package gift.component;
 
+import gift.domain.Member;
 import gift.enums.Role;
 import gift.exception.UnauthorizedException;
 import io.jsonwebtoken.Claims;
@@ -73,5 +74,16 @@ public class JwtUtil {
         }
 
         return authHeader.substring(7);
+    }
+
+    public String createToken(Member member) {
+        return Jwts.builder()
+                .subject(member.getId().toString())
+                .claim("kakao_id", member.getKakaoId())
+                .claim("email", member.getEmail())
+                .claim("role", member.getRole())
+                .claim("oauth_provider", member.getOauthProvider())
+                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()))
+                .compact();
     }
 }

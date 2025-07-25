@@ -11,7 +11,7 @@
   - `RestTemplate`을 이용한 POST 요청
   - 인가 코드를 통한 엑세스 토큰 발급
   - 예외 처리를 위한 `RestTemplateResponseErrorHandler` 구현
-- [ ] 사용자 로그인 처리
+- [x] 사용자 로그인 처리
   - ID 토큰 유효성 검증
   - 발급받은 토큰으로 사용자 정보 조회
   - 서비스 회원 정보 확인 또는 가입 처리

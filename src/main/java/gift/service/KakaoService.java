@@ -1,13 +1,18 @@
 package gift.service;
 
+import gift.component.JwtUtil;
 import gift.config.KakaoOauthConfig;
 import gift.domain.KakaoLoginResponse;
 import gift.domain.KakaoUserInfo;
+import gift.domain.Member;
 import gift.dto.TokenResponseDto;
+import gift.enums.OauthProvider;
 import gift.exception.RestTemplateResponseErrorHandler;
+import gift.repository.MemberRepository;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
@@ -15,23 +20,36 @@ import java.net.URI;
 
 @Service
 public class KakaoService {
+    private final MemberRepository memberRepository;
     private final KakaoOauthConfig kakaoOauthConfig;
     private final RestTemplate restTemplate;
+    private final JwtUtil jwtUtil;
 
-    public KakaoService(KakaoOauthConfig kakaoOauthConfig, RestTemplateBuilder restTemplateBuilder) {
+    public KakaoService(MemberRepository memberRepository, KakaoOauthConfig kakaoOauthConfig, RestTemplateBuilder restTemplateBuilder, JwtUtil jwtUtil) {
+        this.memberRepository = memberRepository;
         this.kakaoOauthConfig = kakaoOauthConfig;
+        this.jwtUtil = jwtUtil;
         restTemplate = restTemplateBuilder
                 .errorHandler(new RestTemplateResponseErrorHandler())
                 .build();
     }
 
+    @Transactional
     public TokenResponseDto kakaoLogin(String authorizationCode) {
         KakaoLoginResponse kakaoLoginResponse = getLoginResponse(authorizationCode);
         KakaoUserInfo userInfo = getUserInfo(kakaoLoginResponse.accessToken());
 
-        System.out.println(userInfo.id());
+        Member member = memberRepository
+                .findMEmberByKakaoIdAndOauthProvider(userInfo.id(), OauthProvider.PROVIDER_KAKAO)
+                .orElseGet(() -> createMemberByKaKaoId(userInfo.id()));
 
-        return null;
+        return new TokenResponseDto(jwtUtil.createToken(member));
+    }
+
+    protected Member createMemberByKaKaoId(Long kakoId) {
+        return memberRepository.save(
+                new Member(kakoId, OauthProvider.PROVIDER_KAKAO)
+        );
     }
 
     private KakaoLoginResponse getLoginResponse(String authorizationCode) {
