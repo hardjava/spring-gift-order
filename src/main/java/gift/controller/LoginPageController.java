@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/login")
 public class LoginPageController {
     private final KakaoOauthConfig kakaoOauthConfig;
-    private final String authUrl = "https://kauth.kakao.com/oauth/authorize?response_type=code";
 
     public LoginPageController(KakaoOauthConfig kakaoOauthConfig) {
         this.kakaoOauthConfig = kakaoOauthConfig;
@@ -19,8 +18,7 @@ public class LoginPageController {
     @GetMapping("/page")
     public String loginPage(Model model) {
         String url = String.format(
-                "%s&client_id=%s&redirect_uri=%s",
-                authUrl,
+                "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=%s&redirect_uri=%s",
                 kakaoOauthConfig.getClientId(),
                 kakaoOauthConfig.getRedirectURI()
         );
