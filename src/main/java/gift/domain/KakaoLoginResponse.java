@@ -1,8 +1,8 @@
-package gift.dto;
+package gift.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public record KakaoLoginResponseDto(
+public record KakaoLoginResponse(
         @JsonProperty("access_token") String accessToken,
         @JsonProperty("token_type") String tokenType,
         @JsonProperty("refresh_token") String refreshToken,

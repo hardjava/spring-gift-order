@@ -1,7 +1,9 @@
 package gift.service;
 
 import gift.config.KakaoOauthConfig;
-import gift.dto.KakaoLoginResponseDto;
+import gift.domain.KakaoLoginResponse;
+import gift.domain.KakaoUserInfo;
+import gift.dto.TokenResponseDto;
 import gift.exception.RestTemplateResponseErrorHandler;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
@@ -23,7 +25,16 @@ public class KakaoService {
                 .build();
     }
 
-    public KakaoLoginResponseDto getAccessToken(String authorizationCode) {
+    public TokenResponseDto kakaoLogin(String authorizationCode) {
+        KakaoLoginResponse kakaoLoginResponse = getLoginResponse(authorizationCode);
+        KakaoUserInfo userInfo = getUserInfo(kakaoLoginResponse.accessToken());
+
+        System.out.println(userInfo.id());
+
+        return null;
+    }
+
+    private KakaoLoginResponse getLoginResponse(String authorizationCode) {
         String url = "https://kauth.kakao.com/oauth/token";
 
         HttpHeaders headers = new HttpHeaders();
@@ -39,7 +50,22 @@ public class KakaoService {
                 body, headers, HttpMethod.POST, URI.create(url)
         );
 
-        ResponseEntity<KakaoLoginResponseDto> response = restTemplate.exchange(request, KakaoLoginResponseDto.class);
+        ResponseEntity<KakaoLoginResponse> response = restTemplate.exchange(request, KakaoLoginResponse.class);
+
+        return response.getBody();
+    }
+
+    private KakaoUserInfo getUserInfo(String accessToken) {
+        String url = "https://kapi.kakao.com/v2/user/me";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(accessToken);
+
+
+        RequestEntity<Void> request = new RequestEntity<>(
+                headers, HttpMethod.GET, URI.create(url));
+
+        ResponseEntity<KakaoUserInfo> response = restTemplate.exchange(request, KakaoUserInfo.class);
 
         return response.getBody();
     }
