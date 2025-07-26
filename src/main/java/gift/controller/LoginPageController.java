@@ -19,8 +19,8 @@ public class LoginPageController {
     public String loginPage(Model model) {
         String url = String.format(
                 "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=%s&redirect_uri=%s",
-                kakaoOauthConfig.getClientId(),
-                kakaoOauthConfig.getRedirectURI()
+                kakaoOauthConfig.clientId(),
+                kakaoOauthConfig.redirectUri()
         );
 
         model.addAttribute("kakaoLoginUrl", url);

@@ -60,8 +60,8 @@ public class KakaoService {
 
         LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
-        body.add("client_id", kakaoOauthConfig.getClientId());
-        body.add("redirect_uri", kakaoOauthConfig.getRedirectURI());
+        body.add("client_id", kakaoOauthConfig.clientId());
+        body.add("redirect_uri", kakaoOauthConfig.redirectUri());
         body.add("code", authorizationCode);
 
         RequestEntity<LinkedMultiValueMap<String, String>> request = new RequestEntity<>(
