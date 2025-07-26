@@ -64,7 +64,7 @@ public class KakaoServiceTest {
                 .thenReturn(ResponseEntity.ok(loginResponse));
         when(restTemplate.exchange(any(RequestEntity.class), eq(KakaoUserInfo.class)))
                 .thenReturn(ResponseEntity.ok(userInfo));
-        when(memberRepository.findMEmberByKakaoIdAndOauthProvider(eq(456L), eq(OauthProvider.PROVIDER_KAKAO)))
+        when(memberRepository.findMemberByOauthIdAndOauthProvider(eq(456L), eq(OauthProvider.PROVIDER_KAKAO)))
                 .thenReturn(Optional.empty());
         when(memberRepository.save(any(Member.class))).thenReturn(newMember);
         when(jwtUtil.createToken(newMember)).thenReturn("mock.new.token");
@@ -84,7 +84,7 @@ public class KakaoServiceTest {
                 .thenReturn(ResponseEntity.ok(loginResponse));
         when(restTemplate.exchange(any(RequestEntity.class), eq(KakaoUserInfo.class)))
                 .thenReturn(ResponseEntity.ok(userInfo));
-        when(memberRepository.findMEmberByKakaoIdAndOauthProvider(eq(456L), eq(OauthProvider.PROVIDER_KAKAO)))
+        when(memberRepository.findMemberByOauthIdAndOauthProvider(eq(456L), eq(OauthProvider.PROVIDER_KAKAO)))
                 .thenReturn(Optional.of(member));
         when(jwtUtil.createToken(member)).thenReturn("mock.jwt.token");
 
