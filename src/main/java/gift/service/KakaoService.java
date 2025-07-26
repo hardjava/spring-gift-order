@@ -40,7 +40,7 @@ public class KakaoService {
         KakaoUserInfo userInfo = getUserInfo(kakaoLoginResponse.accessToken());
 
         Member member = memberRepository
-                .findMEmberByKakaoIdAndOauthProvider(userInfo.id(), OauthProvider.PROVIDER_KAKAO)
+                .findMemberByOauthIdAndOauthProvider(userInfo.id(), OauthProvider.PROVIDER_KAKAO)
                 .orElseGet(() -> createMemberByKaKaoId(userInfo.id()));
 
         return new TokenResponseDto(jwtUtil.createToken(member));

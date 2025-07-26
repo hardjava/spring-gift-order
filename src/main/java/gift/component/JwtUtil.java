@@ -79,7 +79,7 @@ public class JwtUtil {
     public String createToken(Member member) {
         return Jwts.builder()
                 .subject(member.getId().toString())
-                .claim("kakao_id", member.getKakaoId())
+                .claim("kakao_id", member.getOauthId())
                 .claim("email", member.getEmail())
                 .claim("role", member.getRole())
                 .claim("oauth_provider", member.getOauthProvider())
