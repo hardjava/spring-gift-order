@@ -3,9 +3,11 @@ package gift.component;
 import gift.domain.Member;
 import gift.domain.Option;
 import gift.domain.Product;
+import gift.domain.Wish;
 import gift.enums.Role;
 import gift.repository.MemberRepository;
 import gift.repository.ProductRepository;
+import gift.repository.WishListRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -15,14 +17,17 @@ import java.util.List;
 public class MockDataInitializer implements CommandLineRunner {
     private final MemberRepository memberRepository;
     private final ProductRepository productRepository;
+    private final WishListRepository wishListRepository;
     private final BCryptEncryptor bCryptEncryptor;
 
     public MockDataInitializer(MemberRepository memberRepository,
                                ProductRepository productRepository,
+                               WishListRepository wishListRepository,
                                BCryptEncryptor bCryptEncryptor) {
         this.memberRepository = memberRepository;
         this.productRepository = productRepository;
         this.bCryptEncryptor = bCryptEncryptor;
+        this.wishListRepository = wishListRepository;
     }
 
     @Override
@@ -82,5 +87,8 @@ public class MockDataInitializer implements CommandLineRunner {
         );
 
         products.forEach(productRepository::save);
+
+        Wish wish = new Wish(m1, products.get(products.size() - 1));
+        wishListRepository.save(wish);
     }
 }
