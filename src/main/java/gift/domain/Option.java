@@ -33,15 +33,7 @@ public class Option extends BaseEntity {
     }
 
     public void subtract(int amount) {
-        if (amount < 1) {
-            throw new IllegalArgumentException("감소시킬 수량은 1 이상이어야 합니다.");
-        }
-
-        if (getQuantity() < amount) {
-            throw new IllegalArgumentException("재고가 부족합니다.");
-        }
-
-        this.quantity = new OptionQuantity(getQuantity() - amount);
+        quantity.subtract(amount);
     }
 
     public Long getId() {
@@ -58,6 +50,10 @@ public class Option extends BaseEntity {
 
     public void setProduct(Product product) {
         this.product = product;
+    }
+
+    public Product getProduct() {
+        return product;
     }
 
     @Override

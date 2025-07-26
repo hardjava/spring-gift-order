@@ -1,5 +1,7 @@
 package gift.repository;
 
+import gift.domain.Member;
+import gift.domain.Product;
 import gift.domain.Wish;
 import gift.domain.WishSummary;
 import org.springframework.data.domain.Page;
@@ -32,4 +34,6 @@ public interface WishListRepository extends JpaRepository<Wish, Long> {
                     """
     )
     Page<WishSummary> findWishSummaryByMemberId(@Param("memberId") Long memberId, @Param("search") String search, Pageable pageable);
+
+    void deleteWishesByMemberAndProduct(Member member, Product product);
 }
