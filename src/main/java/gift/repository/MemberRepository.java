@@ -1,6 +1,7 @@
 package gift.repository;
 
 import gift.domain.Member;
+import gift.enums.OauthProvider;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
@@ -12,4 +13,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findMemberById(Long id);
 
     boolean existsMemberByEmail(String email);
+
+    Optional<Member> findMEmberByKakaoIdAndOauthProvider(Long id, OauthProvider oauthProvider);
 }

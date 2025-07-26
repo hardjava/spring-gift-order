@@ -8,10 +8,10 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 public interface OptionRepository extends JpaRepository<Option, Long> {
-    List<Option> findByProduct_Id(Long productId);
+    List<Option> findByProductId(Long productId);
 
     default List<Option> findByProductIdOrElseThrow(Long productId) {
-        List<Option> options = findByProduct_Id(productId);
+        List<Option> options = findByProductId(productId);
         if (options.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 ID의 상품을 찾을 수 없습니다.");
         }

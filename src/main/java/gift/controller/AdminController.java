@@ -59,15 +59,15 @@ public class AdminController {
     }
 
     // 상품 등록 페이지
-//    @GetMapping("/new")
-//    public String createProduct(
-//            @RequestHeader(value = "Authorization", required = false) String authHeader,
-//            Model model) {
-//        jwtUtil.validateAuthorizationAdminHeader(authHeader, "admin-api");
-//        model.addAttribute("product", new CreateProductRequestDto("", 0L, ""));
-//
-//        return "admin/product/create";
-//    }
+    @GetMapping("/new")
+    public String createProduct(
+            @RequestHeader(value = "Authorization", required = false) String authHeader,
+            Model model) {
+        jwtUtil.validateAuthorizationAdminHeader(authHeader, "admin-api");
+        model.addAttribute("product", new CreateProductRequestDto("", 0L, "", null));
+
+        return "admin/product/create";
+    }
 
     // 상품 등록
     @PostMapping("/new")

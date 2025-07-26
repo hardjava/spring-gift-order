@@ -1,25 +1,34 @@
 package gift.domain;
 
+import gift.enums.OauthProvider;
 import gift.enums.Role;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "member")
+@Table(name = "member",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "kakaoId_oauthProvider", columnNames = {"kakao_id", "oauth_provider"})
+        })
 public class Member extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    private Long kakaoId;
+
+    @Column(unique = true)
     private String email;
 
-    @Column(nullable = false)
     private String password;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Role role;
+    private Role role = Role.ROLE_USER;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private OauthProvider oauthProvider = OauthProvider.NONE;
 
     public Member(Long id, String email, String password, Role role) {
         this.id = id;
@@ -30,6 +39,11 @@ public class Member extends BaseEntity {
 
     public Member(String email, String password, Role role) {
         this(null, email, password, role);
+    }
+
+    public Member(Long kakaoId, OauthProvider oauthProvider) {
+        this.kakaoId = kakaoId;
+        this.oauthProvider = oauthProvider;
     }
 
     protected Member() {
@@ -45,6 +59,14 @@ public class Member extends BaseEntity {
 
     public String getPassword() {
         return password;
+    }
+
+    public Long getKakaoId() {
+        return kakaoId;
+    }
+
+    public OauthProvider getOauthProvider() {
+        return oauthProvider;
     }
 
     public Role getRole() {

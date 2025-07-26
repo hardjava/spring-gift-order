@@ -83,9 +83,9 @@ public class ProductController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @GetMapping("/{productID}/options")
-    public ResponseEntity<OptionResponseDto> findAllOptions(@PathVariable Long productID) {
-        OptionResponseDto responseDto = optionService.getAllOptions(productID);
+    @GetMapping("/{productId}/options")
+    public ResponseEntity<OptionResponseDto> findAllOptions(@PathVariable Long productId) {
+        OptionResponseDto responseDto = optionService.getAllOptions(productId);
 
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }

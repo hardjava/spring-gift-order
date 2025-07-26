@@ -17,8 +17,8 @@ public class OptionService {
         this.optionRepository = optionRepository;
     }
 
-    public OptionResponseDto getAllOptions(Long productID) {
-        List<Option> findOptions = optionRepository.findByProductIdOrElseThrow(productID);
+    public OptionResponseDto getAllOptions(Long productId) {
+        List<Option> findOptions = optionRepository.findByProductIdOrElseThrow(productId);
 
         return new OptionResponseDto(
                 findOptions.stream()

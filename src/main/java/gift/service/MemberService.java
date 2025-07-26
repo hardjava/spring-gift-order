@@ -1,15 +1,13 @@
 package gift.service;
 
 import gift.component.BCryptEncryptor;
+import gift.component.JwtUtil;
 import gift.dto.LoginRequestDto;
 import gift.dto.RegisterMemberRequestDto;
 import gift.dto.TokenResponseDto;
 import gift.domain.Member;
 import gift.enums.Role;
 import gift.repository.MemberRepository;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,13 +19,12 @@ import java.util.Optional;
 public class MemberService {
     private final MemberRepository memberRepository;
     private final BCryptEncryptor bCryptEncryptor;
+    private final JwtUtil jwtUtil;
 
-    @Value("${jwt.secret}")
-    private String secretKey;
-
-    public MemberService(MemberRepository memberRepository, BCryptEncryptor bCryptEncryptor) {
+    public MemberService(MemberRepository memberRepository, BCryptEncryptor bCryptEncryptor, JwtUtil jwtUtil) {
         this.memberRepository = memberRepository;
         this.bCryptEncryptor = bCryptEncryptor;
+        this.jwtUtil = jwtUtil;
     }
 
     @Transactional
@@ -57,7 +54,7 @@ public class MemberService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "이메일 또는 비밀번호가 불일치 합니다.");
         }
 
-        return new TokenResponseDto(getToken(member));
+        return new TokenResponseDto(jwtUtil.createToken(member));
     }
 
     public Member findMemberById(Long id) {
@@ -67,14 +64,5 @@ public class MemberService {
         }
 
         return findMember.get();
-    }
-
-    private String getToken(Member member) {
-        return Jwts.builder()
-                .subject(member.getId().toString())
-                .claim("email", member.getEmail())
-                .claim("role", member.getRole())
-                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()))
-                .compact();
     }
 }
