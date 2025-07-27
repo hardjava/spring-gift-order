@@ -75,7 +75,7 @@ public class RepositoryTest {
         Product product = productRepository.save(new Product("상품1", 1000L, "img.jpg"));
         wishListRepository.save(new Wish(member, product));
         // when
-        boolean exists = wishListRepository.existsWishByMember_IdAndProduct_Id(member.getId(), product.getId());
+        boolean exists = wishListRepository.existsWishByMemberIdAndProductId(member.getId(), product.getId());
         // then
         assertThat(exists).isTrue();
     }
@@ -87,7 +87,7 @@ public class RepositoryTest {
         Product product = productRepository.save(new Product("상품1", 1000L, "img.jpg"));
         Wish wish = wishListRepository.save(new Wish(member, product));
         // when
-        wishListRepository.deleteWishByMember_IdAndProduct_Id(member.getId(), product.getId());
+        wishListRepository.deleteWishByMemberIdAndProductId(member.getId(), product.getId());
         // then
         assertThat(wishListRepository.findById(wish.getId())).isEmpty();
     }

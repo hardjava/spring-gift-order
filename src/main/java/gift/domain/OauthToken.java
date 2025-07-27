@@ -32,8 +32,4 @@ public class OauthToken {
     public String getAccessToken() {
         return accessToken;
     }
-
-    public String getRefreshToken() {
-        return refreshToken;
-    }
 }
