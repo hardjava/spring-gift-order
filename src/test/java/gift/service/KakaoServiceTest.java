@@ -1,5 +1,6 @@
 package gift.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.component.JwtUtil;
 import gift.config.KakaoOauthConfig;
 import gift.domain.KakaoLoginResponse;
@@ -8,6 +9,7 @@ import gift.domain.Member;
 import gift.dto.TokenResponseDto;
 import gift.enums.OauthProvider;
 import gift.repository.MemberRepository;
+import gift.repository.OauthTokenRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,6 +34,9 @@ public class KakaoServiceTest {
     private MemberRepository memberRepository;
 
     @Mock
+    private OauthTokenRepository oauthTokenRepository;
+
+    @Mock
     private KakaoOauthConfig kakaoOauthConfig;
 
     @Mock
@@ -39,6 +44,9 @@ public class KakaoServiceTest {
 
     @Mock
     private JwtUtil jwtUtil;
+
+    @Mock
+    private ObjectMapper objectMapper;
 
     @Mock
     private RestTemplateBuilder restTemplateBuilder;
@@ -50,7 +58,7 @@ public class KakaoServiceTest {
         MockitoAnnotations.openMocks(this);
         when(restTemplateBuilder.errorHandler(any())).thenReturn(restTemplateBuilder);
         when(restTemplateBuilder.build()).thenReturn(restTemplate);
-        kakaoService = new KakaoService(memberRepository, kakaoOauthConfig, restTemplateBuilder, jwtUtil);
+        kakaoService = new KakaoService(memberRepository, oauthTokenRepository, kakaoOauthConfig, restTemplateBuilder, jwtUtil, objectMapper);
     }
 
     @Test
