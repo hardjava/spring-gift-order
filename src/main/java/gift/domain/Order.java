@@ -45,6 +45,10 @@ public class Order extends BaseEntity {
         return option.getId();
     }
 
+    public String getOptionName() {
+        return option.getName();
+    }
+
     public Integer getQuantity() {
         return optionQuantity.getQuantity();
     }

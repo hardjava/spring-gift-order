@@ -22,10 +22,12 @@ public class LoginPageController {
     public String loginPage(Model model) {
         URI uri =
                 UriComponentsBuilder.fromUriString("https://kauth.kakao.com")
-                        .path("oauth/authorize")
+                        .path("/oauth/authorize")
                         .queryParam("response_type", "code")
                         .queryParam("client_id", kakaoOauthConfig.clientId())
                         .queryParam("redirect_uri", kakaoOauthConfig.redirectUri())
+                        .queryParam("scope", "talk_message")
+                        .queryParam("prompt", "consent")
                         .build().toUri();
 
         model.addAttribute("kakaoLoginUrl", uri);
