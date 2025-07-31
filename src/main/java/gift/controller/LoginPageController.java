@@ -15,6 +15,7 @@ public class LoginPageController {
 
     @GetMapping("/")
     public String loginPage(Model model) {
+        System.out.println("kakaoService.getKakaoLoginUri() = " + kakaoService.getKakaoLoginUri());
         model.addAttribute("kakaoLoginUrl", kakaoService.getKakaoLoginUri());
 
         return "login-page";
