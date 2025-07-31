@@ -40,11 +40,11 @@ public class WishListService {
 
     @Transactional
     public void deleteWish(Long memberId, Long productId) {
-        if (!wishListRepository.existsWishByMember_IdAndProduct_Id(memberId, productId)) {
+        if (!wishListRepository.existsWishByMemberIdAndProductId(memberId, productId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 상품을 찾을 수 없습니다.");
         }
 
-        wishListRepository.deleteWishByMember_IdAndProduct_Id(memberId, productId);
+        wishListRepository.deleteWishByMemberIdAndProductId(memberId, productId);
     }
 
 }

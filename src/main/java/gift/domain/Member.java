@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "member",
         uniqueConstraints = {
-                @UniqueConstraint(name = "kakaoId_oauthProvider", columnNames = {"kakao_id", "oauth_provider"})
+                @UniqueConstraint(name = "kakaoId_oauthProvider", columnNames = {"oauth_id", "oauth_provider"})
         })
 public class Member extends BaseEntity {
 
@@ -15,7 +15,7 @@ public class Member extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long kakaoId;
+    private Long oauthId;
 
     @Column(unique = true)
     private String email;
@@ -41,8 +41,8 @@ public class Member extends BaseEntity {
         this(null, email, password, role);
     }
 
-    public Member(Long kakaoId, OauthProvider oauthProvider) {
-        this.kakaoId = kakaoId;
+    public Member(Long oauthId, OauthProvider oauthProvider) {
+        this.oauthId = oauthId;
         this.oauthProvider = oauthProvider;
     }
 
@@ -61,8 +61,8 @@ public class Member extends BaseEntity {
         return password;
     }
 
-    public Long getKakaoId() {
-        return kakaoId;
+    public Long getOauthId() {
+        return oauthId;
     }
 
     public OauthProvider getOauthProvider() {

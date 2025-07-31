@@ -27,15 +27,15 @@ public class OptionQuantity {
         }
     }
 
-    public OptionQuantity subtract(int amount) {
+    public void subtract(int amount) {
         if (amount < 1) {
             throw new IllegalArgumentException("감소시킬 수량은 1 이상이어야 합니다.");
         }
 
-        if (this.quantity < amount) {
+        if (quantity < amount) {
             throw new IllegalArgumentException("재고가 부족합니다.");
         }
 
-        return new OptionQuantity(this.quantity - amount);
+        this.quantity -= amount;
     }
 }

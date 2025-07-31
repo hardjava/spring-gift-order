@@ -1,5 +1,7 @@
 package gift.repository;
 
+import gift.domain.Member;
+import gift.domain.Product;
 import gift.domain.Wish;
 import gift.domain.WishSummary;
 import org.springframework.data.domain.Page;
@@ -10,9 +12,9 @@ import org.springframework.data.repository.query.Param;
 
 public interface WishListRepository extends JpaRepository<Wish, Long> {
 
-    boolean existsWishByMember_IdAndProduct_Id(Long memberId, Long productId);
+    boolean existsWishByMemberIdAndProductId(Long memberId, Long productId);
 
-    void deleteWishByMember_IdAndProduct_Id(Long memberId, Long productId);
+    void deleteWishByMemberIdAndProductId(Long memberId, Long productId);
 
     @Query(
             value = """ 
@@ -32,4 +34,7 @@ public interface WishListRepository extends JpaRepository<Wish, Long> {
                     """
     )
     Page<WishSummary> findWishSummaryByMemberId(@Param("memberId") Long memberId, @Param("search") String search, Pageable pageable);
+
+    void deleteWishesByMemberAndProduct(Member member, Product product);
+
 }

@@ -21,4 +21,8 @@ public class BaseEntity {
 
     protected BaseEntity() {
     }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 }

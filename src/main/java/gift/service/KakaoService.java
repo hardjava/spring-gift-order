@@ -1,37 +1,59 @@
 package gift.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.component.JwtUtil;
 import gift.config.KakaoOauthConfig;
-import gift.domain.KakaoLoginResponse;
-import gift.domain.KakaoUserInfo;
-import gift.domain.Member;
+import gift.config.RestClientConfig;
+import gift.domain.*;
 import gift.dto.TokenResponseDto;
 import gift.enums.OauthProvider;
-import gift.exception.RestTemplateResponseErrorHandler;
 import gift.repository.MemberRepository;
-import org.springframework.boot.web.client.RestTemplateBuilder;
+import gift.repository.OauthTokenRepository;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 
 @Service
 public class KakaoService {
     private final MemberRepository memberRepository;
+    private final OauthTokenRepository oauthTokenRepository;
     private final KakaoOauthConfig kakaoOauthConfig;
-    private final RestTemplate restTemplate;
     private final JwtUtil jwtUtil;
+    private final ObjectMapper objectMapper;
+    private final URI kakaoLoginUri;
+    private static final String KAKAO_AUTH_BASE_URL = "https://kauth.kakao.com";
+    private static final String KAKAO_API_BASE_URL = "https://kapi.kakao.com";
+    private final RestClient restClient;
 
-    public KakaoService(MemberRepository memberRepository, KakaoOauthConfig kakaoOauthConfig, RestTemplateBuilder restTemplateBuilder, JwtUtil jwtUtil) {
+    public KakaoService(MemberRepository memberRepository, OauthTokenRepository oauthTokenRepository, KakaoOauthConfig kakaoOauthConfig, JwtUtil jwtUtil, ObjectMapper objectMapper) {
         this.memberRepository = memberRepository;
+        this.oauthTokenRepository = oauthTokenRepository;
         this.kakaoOauthConfig = kakaoOauthConfig;
         this.jwtUtil = jwtUtil;
-        restTemplate = restTemplateBuilder
-                .errorHandler(new RestTemplateResponseErrorHandler())
-                .build();
+        this.objectMapper = objectMapper;
+        this.kakaoLoginUri = createKakaoUri();
+        this.restClient = new RestClientConfig().restClientBuilder().build();
+    }
+
+    private URI createKakaoUri() {
+        return UriComponentsBuilder.fromUriString(KAKAO_AUTH_BASE_URL)
+                .path("/oauth/authorize")
+                .queryParam("response_type", "code")
+                .queryParam("client_id", kakaoOauthConfig.clientId())
+                .queryParam("redirect_uri", kakaoOauthConfig.redirectUri())
+                .queryParam("scope", "talk_message")
+                .queryParam("prompt", "consent")
+                .build().toUri();
+    }
+
+    public URI getKakaoLoginUri() {
+        return kakaoLoginUri;
     }
 
     @Transactional
@@ -40,51 +62,65 @@ public class KakaoService {
         KakaoUserInfo userInfo = getUserInfo(kakaoLoginResponse.accessToken());
 
         Member member = memberRepository
-                .findMEmberByKakaoIdAndOauthProvider(userInfo.id(), OauthProvider.PROVIDER_KAKAO)
+                .findMemberByOauthIdAndOauthProvider(userInfo.id(), OauthProvider.PROVIDER_KAKAO)
                 .orElseGet(() -> createMemberByKaKaoId(userInfo.id()));
+
+        oauthTokenRepository.save(
+                new OauthToken(member, kakaoLoginResponse.accessToken(), kakaoLoginResponse.refreshToken())
+        );
 
         return new TokenResponseDto(jwtUtil.createToken(member));
     }
 
-    protected Member createMemberByKaKaoId(Long kakoId) {
+    protected Member createMemberByKaKaoId(Long kakaoId) {
         return memberRepository.save(
-                new Member(kakoId, OauthProvider.PROVIDER_KAKAO)
+                new Member(kakaoId, OauthProvider.PROVIDER_KAKAO)
         );
     }
 
     private KakaoLoginResponse getLoginResponse(String authorizationCode) {
-        String url = "https://kauth.kakao.com/oauth/token";
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
-
+        String url = KAKAO_AUTH_BASE_URL + "/oauth/token";
         LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
-        body.add("client_id", kakaoOauthConfig.getClientId());
-        body.add("redirect_uri", kakaoOauthConfig.getRedirectURI());
+        body.add("client_id", kakaoOauthConfig.clientId());
+        body.add("redirect_uri", kakaoOauthConfig.redirectUri());
         body.add("code", authorizationCode);
 
-        RequestEntity<LinkedMultiValueMap<String, String>> request = new RequestEntity<>(
-                body, headers, HttpMethod.POST, URI.create(url)
-        );
-
-        ResponseEntity<KakaoLoginResponse> response = restTemplate.exchange(request, KakaoLoginResponse.class);
-
-        return response.getBody();
+        return restClient.post()
+                .uri(url)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                .body(body)
+                .retrieve()
+                .body(KakaoLoginResponse.class);
     }
 
     private KakaoUserInfo getUserInfo(String accessToken) {
-        String url = "https://kapi.kakao.com/v2/user/me";
+        String url = KAKAO_API_BASE_URL + "/v2/user/me";
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(accessToken);
+        return restClient.get()
+                .uri(url)
+                .headers(httpHeaders -> httpHeaders.setBearerAuth(accessToken))
+                .retrieve()
+                .body(KakaoUserInfo.class);
+    }
 
+    public void sendKakaoMessage(Member member, KakaoMessageTemplateRequest templateRequest) {
+        String url = KAKAO_API_BASE_URL + "/v2/api/talk/memo/default/send";
+        OauthToken accessToken = oauthTokenRepository.findByMemberOrElseThrow(member);
 
-        RequestEntity<Void> request = new RequestEntity<>(
-                headers, HttpMethod.GET, URI.create(url));
+        try {
+            String templateJson = objectMapper.writeValueAsString(templateRequest);
+            LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+            body.add("template_object", templateJson);
 
-        ResponseEntity<KakaoUserInfo> response = restTemplate.exchange(request, KakaoUserInfo.class);
-
-        return response.getBody();
+            String response = restClient.post()
+                    .uri(url)
+                    .headers(httpHeaders -> httpHeaders.setBearerAuth(accessToken.getAccessToken()))
+                    .body(body)
+                    .retrieve()
+                    .body(String.class);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "카카오 메시지 전송 실패", e);
+        }
     }
 }

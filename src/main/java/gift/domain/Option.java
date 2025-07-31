@@ -33,7 +33,7 @@ public class Option extends BaseEntity {
     }
 
     public void subtract(int amount) {
-        this.quantity = this.quantity.subtract(amount);
+        quantity.subtract(amount);
     }
 
     public Long getId() {
@@ -50,6 +50,10 @@ public class Option extends BaseEntity {
 
     public void setProduct(Product product) {
         this.product = product;
+    }
+
+    public Product getProduct() {
+        return product;
     }
 
     @Override

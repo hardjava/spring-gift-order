@@ -8,6 +8,7 @@ import gift.dto.TokenResponseDto;
 import gift.domain.Member;
 import gift.enums.Role;
 import gift.repository.MemberRepository;
+import gift.repository.OauthTokenRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,11 +19,13 @@ import java.util.Optional;
 @Service
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final OauthTokenRepository oauthTokenRepository;
     private final BCryptEncryptor bCryptEncryptor;
     private final JwtUtil jwtUtil;
 
-    public MemberService(MemberRepository memberRepository, BCryptEncryptor bCryptEncryptor, JwtUtil jwtUtil) {
+    public MemberService(MemberRepository memberRepository, OauthTokenRepository oauthTokenRepository, BCryptEncryptor bCryptEncryptor, JwtUtil jwtUtil) {
         this.memberRepository = memberRepository;
+        this.oauthTokenRepository = oauthTokenRepository;
         this.bCryptEncryptor = bCryptEncryptor;
         this.jwtUtil = jwtUtil;
     }
@@ -64,5 +67,10 @@ public class MemberService {
         }
 
         return findMember.get();
+    }
+
+    @Transactional
+    public void logout(Member member) {
+        oauthTokenRepository.deleteByMember(member);
     }
 }
