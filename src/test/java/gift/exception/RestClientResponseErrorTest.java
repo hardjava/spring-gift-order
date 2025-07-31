@@ -1,29 +1,31 @@
 package gift.exception;
 
+import gift.config.RestClientConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpMethod;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.client.MockRestServiceServer;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.server.ResponseStatusException;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 
-public class RestTemplateResponseErrorTest {
-    private RestTemplate restTemplate;
+@SpringBootTest
+public class RestClientResponseErrorTest {
+    @Autowired
+    private RestClientConfig config;
+    private RestClient restClient;
     private MockRestServiceServer mockServer;
 
     @BeforeEach
     void setUp() {
-        RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder();
-        restTemplate = restTemplateBuilder
-                .errorHandler(new RestTemplateResponseErrorHandler())
-                .build();
-        mockServer = MockRestServiceServer.createServer(restTemplate);
+        RestClient.Builder builder = config.restClientBuilder();
+        mockServer = MockRestServiceServer.bindTo(builder).build();
+        restClient = builder.build();
     }
 
     @Test
@@ -36,7 +38,10 @@ public class RestTemplateResponseErrorTest {
 
         // when & then
         assertThatThrownBy(() ->
-                restTemplate.exchange(url, HttpMethod.GET, null, String.class)
+                restClient.get()
+                        .uri(url)
+                        .retrieve()
+                        .body(String.class)
         )
                 .isInstanceOf(ResponseStatusException.class)
                 .hasMessageContaining("카카오 서버 오류 발생");
@@ -52,7 +57,11 @@ public class RestTemplateResponseErrorTest {
 
         // when & then
         assertThatThrownBy(() ->
-                restTemplate.exchange(url, HttpMethod.GET, null, String.class)
+//                restTemplate.exchange(url, HttpMethod.GET, null, String.class)
+                        restClient.get()
+                                .uri(url)
+                                .retrieve()
+                                .body(String.class)
         )
                 .isInstanceOf(ResponseStatusException.class)
                 .hasMessageContaining("요청이 잘못되었습니다.");
@@ -68,7 +77,10 @@ public class RestTemplateResponseErrorTest {
 
         // when & then
         assertThatThrownBy(() ->
-                restTemplate.exchange(url, HttpMethod.GET, null, String.class)
+                restClient.get()
+                        .uri(url)
+                        .retrieve()
+                        .body(String.class)
         )
                 .isInstanceOf(ResponseStatusException.class)
                 .hasMessageContaining("사용자를 찾을 수 없습니다.");

@@ -1,36 +1,25 @@
 package gift.controller;
 
-import gift.config.KakaoOauthConfig;
+import gift.service.KakaoService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import java.net.URI;
 
 @Controller
 @RequestMapping("/login")
 public class LoginPageController {
-    private final KakaoOauthConfig kakaoOauthConfig;
+    private final KakaoService kakaoService;
 
-    public LoginPageController(KakaoOauthConfig kakaoOauthConfig) {
-        this.kakaoOauthConfig = kakaoOauthConfig;
+    public LoginPageController(KakaoService kakaoService) {
+        this.kakaoService = kakaoService;
     }
 
     @GetMapping("/page")
     public String loginPage(Model model) {
-        URI uri =
-                UriComponentsBuilder.fromUriString("https://kauth.kakao.com")
-                        .path("/oauth/authorize")
-                        .queryParam("response_type", "code")
-                        .queryParam("client_id", kakaoOauthConfig.clientId())
-                        .queryParam("redirect_uri", kakaoOauthConfig.redirectUri())
-                        .queryParam("scope", "talk_message")
-                        .queryParam("prompt", "consent")
-                        .build().toUri();
+        model.addAttribute("kakaoLoginUrl", kakaoService.getKakaoLoginUri());
 
-        model.addAttribute("kakaoLoginUrl", uri);
         return "login-page";
     }
 }

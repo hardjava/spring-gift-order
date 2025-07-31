@@ -1,9 +1,7 @@
 package gift.service;
 
-import gift.domain.Member;
-import gift.domain.Option;
-import gift.domain.Order;
-import gift.domain.OrderInfo;
+import gift.component.KakaoMessageTemplateFactory;
+import gift.domain.*;
 import gift.dto.OrderRequestDto;
 import gift.dto.OrderResponseDto;
 import gift.enums.OauthProvider;
@@ -19,12 +17,14 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final WishListRepository wishListRepository;
     private final KakaoService kakaoService;
+    private final KakaoMessageTemplateFactory kakaoMessageTemplateFactory;
 
-    public OrderService(OptionRepository optionRepository, OrderRepository orderRepository, WishListRepository wishListRepository, KakaoService kakaoService) {
+    public OrderService(OptionRepository optionRepository, OrderRepository orderRepository, WishListRepository wishListRepository, KakaoService kakaoService, KakaoMessageTemplateFactory kakaoMessageTemplateFactory) {
         this.optionRepository = optionRepository;
         this.orderRepository = orderRepository;
         this.wishListRepository = wishListRepository;
         this.kakaoService = kakaoService;
+        this.kakaoMessageTemplateFactory = kakaoMessageTemplateFactory;
     }
 
     @Transactional
@@ -36,7 +36,8 @@ public class OrderService {
         orderRepository.save(order);
 
         if (member.getOauthProvider().equals(OauthProvider.PROVIDER_KAKAO)) {
-            kakaoService.sendKakaoMessage(OrderInfo.from(order));
+            KakaoMessageTemplateRequest orderTemplate = kakaoMessageTemplateFactory.createOrderTemplate(OrderInfo.from(order));
+            kakaoService.sendKakaoMessage(member, orderTemplate);
         }
 
         return OrderResponseDto.from(order);
