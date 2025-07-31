@@ -29,5 +29,11 @@
 
 ## 3️⃣ 단계 - 배포하기
 ### 구현 예정 기능 목록
-- [ ] 배포 스크립트 작성
+- [ ] 자동 배포 설정 (GitHub Actions -> EC2)
+  - `step3` 브랜치 push 시, EC2 서버에 SSH 접속하여 다음 작업 수행
+    - `application.properties` 재설정
+    - `main` 브랜치 pull 및 `hardjava` 브랜치 checkout
+    - Gradle 빌드 후 실행 중인 서버 종료
+    - 새로 빌드한 JAR 실행
+    - 로그 `output.log`로 저장
 - [ ] 클라이언트 연동을 위한 보안 설정
