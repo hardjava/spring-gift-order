@@ -3,7 +3,6 @@ package gift.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.component.JwtUtil;
 import gift.config.KakaoOauthConfig;
-import gift.config.RestClientConfig;
 import gift.domain.*;
 import gift.dto.TokenResponseDto;
 import gift.enums.OauthProvider;
@@ -31,14 +30,20 @@ public class KakaoService {
     private static final String KAKAO_API_BASE_URL = "https://kapi.kakao.com";
     private final RestClient restClient;
 
-    public KakaoService(MemberRepository memberRepository, OauthTokenRepository oauthTokenRepository, KakaoOauthConfig kakaoOauthConfig, JwtUtil jwtUtil, ObjectMapper objectMapper) {
+    public KakaoService(MemberRepository memberRepository,
+                        OauthTokenRepository oauthTokenRepository,
+                        KakaoOauthConfig kakaoOauthConfig,
+                        JwtUtil jwtUtil,
+                        ObjectMapper objectMapper,
+                        RestClient.Builder restClientBuilder
+    ) {
         this.memberRepository = memberRepository;
         this.oauthTokenRepository = oauthTokenRepository;
         this.kakaoOauthConfig = kakaoOauthConfig;
         this.jwtUtil = jwtUtil;
         this.objectMapper = objectMapper;
         this.kakaoLoginUri = createKakaoUri();
-        this.restClient = new RestClientConfig().restClientBuilder().build();
+        this.restClient = restClientBuilder.build();
     }
 
     private URI createKakaoUri() {
