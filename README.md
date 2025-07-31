@@ -29,7 +29,7 @@
 
 ## 3️⃣ 단계 - 배포하기
 ### 구현 예정 기능 목록
-- [ ] 자동 배포 설정 (GitHub Actions -> EC2)
+- [x] 자동 배포 설정 (GitHub Actions -> EC2)
   - `step3` 브랜치 push 시, EC2 서버에 SSH 접속하여 다음 작업 수행
     - `application.properties` 재설정
     - `main` 브랜치 pull 및 `hardjava` 브랜치 checkout
