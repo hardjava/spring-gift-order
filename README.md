@@ -36,4 +36,9 @@
     - Gradle 빌드 후 실행 중인 서버 종료
     - 새로 빌드한 JAR 실행
     - 로그 `output.log`로 저장
-- [ ] dㄹㄴㅇㅁ
+- [x] CORS 설정
+  - 클라이언트와 서버가 서로 다른 Origin을 사용하는 경우 발생할 수 있는 CORS 문제를 해결하기 위해, 서버에 CORS 설정을 적용
+    - 모든 경로에 대해 CORS 허용
+    - 모든 Origin 허용
+    - HTTP 메서드 GET, POST, PUT, DELETE 허용
+    - 모든 요청 헤더 허용
