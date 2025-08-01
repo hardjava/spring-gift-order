@@ -57,7 +57,6 @@ public class RestClientResponseErrorTest {
 
         // when & then
         assertThatThrownBy(() ->
-//                restTemplate.exchange(url, HttpMethod.GET, null, String.class)
                         restClient.get()
                                 .uri(url)
                                 .retrieve()

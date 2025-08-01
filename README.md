@@ -26,3 +26,19 @@
   - [x] 주문한 상품이 위시리스트에 있는 경우 자동 삭제 기능
   - [x] 주문 생성 시 주문 내역을 나에게 카카오톡 메시지로 전송 기능
 - [x] 테스트 코드 작성
+
+## 3️⃣ 단계 - 배포하기
+### 구현 예정 기능 목록
+- [x] 자동 배포 설정 (GitHub Actions -> EC2)
+  - `step3` 브랜치 push 시, EC2 서버에 SSH 접속하여 다음 작업 수행
+    - `application.properties` 재설정
+    - `main` 브랜치 pull 및 `hardjava` 브랜치 checkout
+    - Gradle 빌드 후 실행 중인 서버 종료
+    - 새로 빌드한 JAR 실행
+    - 로그 `output.log`로 저장
+- [x] CORS 설정
+  - 클라이언트와 서버가 서로 다른 Origin을 사용하는 경우 발생할 수 있는 CORS 문제를 해결하기 위해, 서버에 CORS 설정을 적용
+    - 모든 경로에 대해 CORS 허용
+    - 모든 Origin 허용
+    - HTTP 메서드 GET, POST, PUT, DELETE 허용
+    - 모든 요청 헤더 허용
